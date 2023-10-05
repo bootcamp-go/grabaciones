@@ -75,3 +75,8 @@ func main() {
 }
 
 // Video-Speech: ahora cambiando sacando el puntero del receiver, y dejando el receiver como una copia del struct veamos que ocurre
+// 
+// Cierre:
+// En este video aprendimos a como crear métodos de tipo pointer-receiver, donde el receiver es un puntero a un struct y nos permite
+// obtener la ultima lectura de la instancia del type asi como modificarlo
+// Gracias a esto podremos abrir el abanico de posibilidades para asociar funcionalidades a nuestros types
