@@ -1,0 +1,55 @@
+Intro
+
+Go es un lenguaje no del todo orientado a objetos, pero si tiene algunos conceptos de la programación orientada a objetos.
+A diferencia de otros lenguajes como Java o Python que aplican el concepto de herencia, Go
+toma un approach más simple y flexible. En lugar de usar herencia, Go usa composición.
+
+---
+
+¿En qué se diferencia composición de herencia?
+La Composición se basa en la idea de crear componentes más grandes a partir de otros más pequeños.
+
+Es una relación de tipo "tiene un" en lugar de "es un".
+
+En el diagrama de abajo podemos ver una serie de componentes, como un microchip, una cpu y gpu. Cada uno de ellos es una unidad
+y son utilizados para crear un componente más grande, una motherboard o placa madre.
+Luego este otro componente se utiliza para crear otro aún más complejo, como la laptop y la computadora
+Podemos ver como los componentes los podemos reutilizar para crear otros más grandes y complejos. Un celular incluso podría tener un microchip
+
+Composición: notamos que podemos armar sistemas más desacoplados y flexibles.
+Los componentes no están fuertemente vinculados, se arman por separado y se los puede coordinar de diferentes maneras cuando se los necesita.
+Esto facilita la reutilización, mantenimiento y modificaciones.
+Si agregamos el concepto de interfaces y abstracciones, el sistema se vuelve aún más flexible a la hora de aplicar modificaciones.
+
+---
+
+Mientras que por otro lado. Herencia se basa en la idea de crear objetos nuevos a partir de otros ya existentes, HEREDANDO sus propiedades y comportamientos.
+Es una relación de tipo "es un" en lugar de "tiene un".
+
+En este sentido aparecen clases padre y clases hijas.
+
+En el ejemplo de abajo podemos ver un sistema de carpetas. Tenemos una carpeta principal que es la carpeta raíz, luego tenemos subcarpetas que se van dividiendo en más subcarpetas.
+En este sentido las subcarpetas van heredando las propiedades de la carpeta raíz.
+
+Llevado a un ejemplo más sencillo. Podemos crear una clase padre llamada "Animal" que tiene 2 propiedades, nombre y edad y 1 funcionalidad que es comer.
+Podemos crear 3 clases hijas, perro, pez y pájaro. Cada una de ellas tiene una relación de tipo "es" con "Animal". Heredan las propiedades y funcionalidades de la clase padre.
+Que ocurre si queremos agregar una funcionalidad volar a la clase Animal, pero no todos los animales vuelan, entraríamos en un conflicto.
+Esto implicaría crear previamente subclases hijas como "Animal Terrestre", "Animal Acuatico" y "Animal Volador" y luego crear las subclases hijas de estas.
+
+Herencia: notamos que tiende a ser más acoplado y rígido.
+Los objetos están fuertemente vinculados, se arman en base a otros objetos y no se pueden reutilizar de manera independiente a menos que hereden de la clase padre que vienen heredando.
+Puede dificultar la reutilización, mantenimiento y modificaciones.
+Se puede utilizar para formar sistemas más simples y pequeños.
+
+---
+
+Cabe aclarar que si bien Java y Python entre otros aplican herencia, no quiere decir que no se puede utilizar su estructura de lenguaje para composición.
+
+Cuando veamos interfaces, vamos a ver que Go las utiliza, separando los conceptos de polimorfismo y composición, a diferencia de herencia que mezcla ambos conceptos.
+
+
+Llevando el ejemplo de la laptop a herencia, como clase padre tendríamos por ejemplo a un CPU, que tiene una serie de propiedades y funcionalidades.
+Luego clases hijas como Laptop y Computadora, que heredan las propiedades y funcionalidades de CPU. Todas parten de CPU.
+
+Se va creando un arbol con alto nivel de jerarquias, quedando un sistema mas acoplado y rigido.
+A diferencia de composición donde cada componente se maneja por separado y se los puede incoporar o coordinar de diferentes maneras cuando se los necesita.
