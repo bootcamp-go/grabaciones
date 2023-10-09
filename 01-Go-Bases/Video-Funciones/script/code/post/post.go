@@ -21,6 +21,15 @@ func main() {
 	fmt.Printf("The square of %d is %d\n", n3, square)
 }
 
+/*
+	Notas del Orador:
+	- Para evitar repetir la misma lógica, podemos crear una función que se encargue de calcular el cuadrado de un número.
+	- Primero indicamos el type func, luego el nombre de la función
+	- Luego definimos las 3 partes de la función: la entrada, proceso y salida
+	- Entrada: es un número entero, el proceso es multiplicar el número por si mismo, ponemos n y el type int
+	- Proceso: es multiplicar el número por si mismo
+	- Salida: es un número entero, el resultado de la multiplicación, ponemos int
+*/
 // Square returns the square of a number
 func Square(n int) int {
 	return n * n

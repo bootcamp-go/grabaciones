@@ -1,0 +1,47 @@
+Video Funciones
+
+____________________________________________________________________________________________________________
+# PPT 01 - Introducción
+Muy buenas a todos, espero que se encuentren muy bien. En este video hablaremos sobre funciones.
+Que son las funciones y como implementarlas en Go.
+
+Luego haremos un mini live-coding con algunos ejemplos
+
+Finalmente haremos una breve conclusión
+
+
+____________________________________________________________________________________________________________
+# PPT 02 - Funciones
+¿Que son las funciones?
+Una función en programación es un bloque de código que se encarga de realizar una tarea concreta.
+
+En go podremos darle un nombre a cada una de ellas
+
+Se compone de 3 partes:
+- Entrada: representa los parametros de entrada que recibe la función. Podemos verlo como una configuración sobre la cual la función va a trabajar.
+Estos pueden ser 0, 1 o muchos parametros
+- Proceso: es el bloque de código que se encarga de realizar la tarea, teniendo acceso a los parametros de entrada
+- Salida: es el resultado que devuelve la función luego de realizar el proceso.
+Pueden ser 0, 1 o muchos resultados
+
+
+____________________________________________________________________________________________________________
+# PPT 03 - Ventajas
+¿Ventajas de las funciones?
+- Separación de responsabilidades: cada función tiene un proposito bien definido, por lo que se puede separar la lógica de la aplicación en pequeñas partes y el codigo sea mas claro. Esto facilita la deteccion de errores y su posterior corrección
+- Codigo mas organizado y desacoplado: al separar la lógica en pequeñas partes, el código se vuelve mas organizado y desacoplado, lo que facilita su mantenimiento y escalabilidad
+- Re-utilización de código: al tener pequeñas partes de código, podemos reutilizarlas en diferentes partes de la aplicación, sin la necesidad de re-escribir la logica.
+
+
+____________________________________________________________________________________________________________
+# PPT 04 - Live-Coding
+./code
+
+
+____________________________________________________________________________________________________________
+# PPT 05 - Conclusión
+En este video vimos que son las funciones y como implementarlas en Go. Recordemos que una función es un bloque de código que se encarga de realizar una tarea específica.
+Aceptan parametros de entrada, procesan y finalmente devuelven un resultado.
+
+Estas son fundamentales para la organización, mantenimiento, escalabilidad y re-utilización de código, a través de la separación de responsabilidades y modularización de la lógica.
+Contribuyen al desarrollo de software eficiente.
