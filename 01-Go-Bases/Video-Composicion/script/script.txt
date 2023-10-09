@@ -1,11 +1,21 @@
-Intro
+Video Composición (ppt link: https://docs.google.com/presentation/d/1oQ0nVak4MclDc14pxA_MuqXgha-rNzGgBQkf5vwNIeY/edit?usp=sharing)
 
+____________________________________________________________________________________________________________________________________
+# PPT 01 - Introducción
+Buenas, ¿como están? espero que muy bien. En este video vamos a hablar de composición en go
+- Que es composición y en que se diferencia de herencia
+- Haremos un live-coding con algunos ejemplos en código en go, para ver se implementa
+- Finalmente cerraremos con una breve conclusión
+
+____________________________________________________________________________________________________________________________________
+# PPT 02 - Composición
+1° Parte:
 Go es un lenguaje no del todo orientado a objetos, pero si tiene algunos conceptos de la programación orientada a objetos.
 A diferencia de otros lenguajes como Java o Python que aplican el concepto de herencia, Go
 toma un approach más simple y flexible. En lugar de usar herencia, Go usa composición.
 
----
 
+2° Parte: Composición
 ¿En qué se diferencia composición de herencia?
 La Composición se basa en la idea de crear componentes más grandes a partir de otros más pequeños.
 
@@ -21,8 +31,8 @@ Los componentes no están fuertemente vinculados, se arman por separado y se los
 Esto facilita la reutilización, mantenimiento y modificaciones.
 Si agregamos el concepto de interfaces y abstracciones, el sistema se vuelve aún más flexible a la hora de aplicar modificaciones.
 
----
 
+3° Parte: Herencia
 Mientras que por otro lado. Herencia se basa en la idea de crear objetos nuevos a partir de otros ya existentes, HEREDANDO sus propiedades y comportamientos.
 Es una relación de tipo "es un" en lugar de "tiene un".
 
@@ -41,7 +51,22 @@ Los objetos están fuertemente vinculados, se arman en base a otros objetos y no
 Puede dificultar la reutilización, mantenimiento y modificaciones.
 Se puede utilizar para formar sistemas más simples y pequeños.
 
----
+____________________________________________________________________________________________________________________________________
+# PPT 03 - Live Coding
+./code/
+
+____________________________________________________________________________________________________________________________________
+# PPT 04 - Conclusión
+En conclusión, en go la forma de aplicar herencia es a través de composición, una forma mas simple y flexible, donde creamos componentes más grandes a partir de otros más pequeños.
+
+Aprendimos las ventajas de composición que nos permite crear sistemas más desacoplados, flexibles y reutilizables, fomentando al mantenimiento y modificaciones.
+
+Tambien implementamos un caso practico para consolidar los conceptos.
+
+Ahora los invito a que practiquen y experimenten con composición en go. Un saludo.
+
+____________________________________________________________________________________________________________________________________
+¡Esto no va!
 
 Cabe aclarar que si bien Java y Python entre otros aplican herencia, no quiere decir que no se puede utilizar su estructura de lenguaje para composición.
 
@@ -53,3 +78,6 @@ Luego clases hijas como Laptop y Computadora, que heredan las propiedades y func
 
 Se va creando un arbol con alto nivel de jerarquias, quedando un sistema mas acoplado y rigido.
 A diferencia de composición donde cada componente se maneja por separado y se los puede incoporar o coordinar de diferentes maneras cuando se los necesita.
+____________________________________________________________________________________________________________________________________
+
+
