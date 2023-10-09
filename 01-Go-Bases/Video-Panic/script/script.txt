@@ -1,0 +1,60 @@
+Video Panic (ppt link: https://docs.google.com/presentation/d/1LrK51Xh643BvJpzsS72gs0FxHkpWYzH7vxrexitBak4/edit?usp=sharing)
+
+_________________________________________________________________________________________________________________________________
+PPT 01 - Introduction
+Muy buenas a todos, espero que esten muy bien. En este video veremos los siguientes temas.
+- Que es panic en Go
+- Live-coding: veremos en codigo como se comporta un panic, como podemos implementarlo y como podemos recuperarnos de un panic.
+- Conclusiones
+
+_________________________________________________________________________________________________________________________________
+PPT 02 - Que es panic en Go
+1° Parte
+- Panic es una funcion nativa de Go que se ejecuta en situaciones excepcionales, donde el programa no puede continuar su ejecucion
+debibo a un error inesperado o crítico.
+
+- Desde el momento que se produce ocurre los siguientes pasos
+1. Se detiene la ejecucion del programa
+2. Se retrocede la pila de llamadas hasta llegar a la funcion main
+3. Durante el retroceso de la pila, se ejecuta la funcion defer en orden LIFO con el fin de liberar recursos en forma adecuada
+
+Aclaracion: el estado de panic se puede recuperar con la funcion recover, a través de una funcion defer. Esto nos permite recuperar el control del programa y continuar con la ejecucion.
+
+
+2° Parte
+Que casos de panic encontramos en Go?
+- Nativos:
+    - Cuando intentamos acceder a un indice de un array o slice que no existe
+    - Dereferenciar un nil pointer
+    - Cuando intentamos agregar una key a un map no inicializado
+
+- Manuales:
+    - Errores irrecuperables: por ejemplo el fallo de una conexion a una base de datos o un puerto erroneo de un servidor
+
+Importante: Si bien podemos utilizar panic para manejar errores junto con el recover para aplicar patrones similares al try-catch de otros lenguajes, no es recomendable utilizarlo de esta forma.
+Go promueve al manejo de errores tradicionales, donde si una funcion tiene posibilidad de fallar, debe devolver un error como otro valor de retorno, y luego identificarlo desde capas superiores.
+
+_________________________________________________________________________________________________________________________________
+PPT 03 - Que es panic en Go
+El stack trace representa el rastreo de la pila de llamadas, es decir, el orden en que se ejecutaron las funciones.
+En este caso el panic nos mostrara el stack trace, desde la funcion donde se produjo el panic hasta la funcion main
+
+Tambien indica por función la linea de codigo donde se llamo a cada función.
+
+[Descripción ppt]
+En la primer linea podemos ver primero un mensaje con información general del panic
+Luego información desde la función donde se produjo el panic, luego la funcion que llamo a la funcion donde se produjo el panic, y asi sucesivamente hasta llegar a la funcion main.
+
+El stack trace generado nos facilitara la depuracion e identificacion del error.
+
+_________________________________________________________________________________________________________________________________
+PPT 04 - Live-coding
+./code
+
+_________________________________________________________________________________________________________________________________
+PPT 05 - Conclusiones
+En resumen:
+- Un panic es una funcion utilizada para manejar errores excepcionales e irreparables que interrumpen la ejecucion del programa
+- Nos reporta el stack trace, facilitando la depuracion
+- Podemos recuperar el estado de panic con la funcion recover, a traves de una funcion defer
+- Se debe utilizar con moderación, se recomienda para errores comunes, utilizar el manejo de errores estandar que provee Go
