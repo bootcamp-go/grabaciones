@@ -1,5 +1,10 @@
 package main
 
+/*
+	Notas del Orador:
+	- Aqui otro ejemplo de un panic nativo donde al intentar dereferenciar un puntero nulo, Go genera un panic.
+*/
+// main.go
 func main() {
 	// Create a new store
 	store := &StorageItemsSlice{

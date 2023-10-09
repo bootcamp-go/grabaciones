@@ -1,5 +1,9 @@
 package main
 
+/*
+	Notas del Orador:
+	- Por ultimo, otro ejemplo donde al intentar guardar un item en un map, al no estar inicializado, Go genera un panic.
+*/
 // main.go
 func main() {
 	// Create a new store

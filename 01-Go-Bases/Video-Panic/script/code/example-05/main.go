@@ -2,8 +2,20 @@ package main
 
 import "fmt"
 
+/*
+	Notas del Orador:
+	- Ahora veremos un ejemplo de como ante un panic, podemos recuperarnos y continuar con la ejecución de nuestro programa.
+
+	- En nuestro ejemplo crearemos un orquestador, que sera un type que se encargara de registrar funciones (en este caso llamadas handlers)
+	  en base a una clave y ejecutarlas cuando se lo indiquemos.
+	- Crearemos 3 funciones y las registraremos en nuestro orquestador.
+	- Una vez registradas, utilizaremos nuestro orquestador para ejecutarlas.
+
+	- Puede ocurrir que alguna de estas funciones falle y genere panic, por ende prevendremos esto y recuperaremos el panic para que nuestro programa no se detenga.
+	- Para esto utilizaremos la función recover, que nos permite recuperarnos de un panic y capturar la data indicada en el panic.
+*/
 func main() {
-	orch := &Orchestrator{
+	or := &Orchestrator{
 		handlers: map[string]func(){
 			"handler1": HandlerOne,
 			"handler2": HandlerTwo,
@@ -11,21 +23,19 @@ func main() {
 		},
 	}
 
-	orch.RunHandler("handler1")
-	orch.RunHandler("handler2")
-	orch.RunHandler("handler3") // panic
-	orch.RunHandler("handler1")
+	or.RunHandler("handler1")
+	or.RunHandler("handler2")
+	or.RunHandler("handler3") // panic
+	or.RunHandler("handler1")
 }
 
-// Video-Speech: Aca tenemos un ejemplo de un orchestrator, que es un tipo que se encarga de ejecutar handlers previamente registrados.
-// si alguno de los handlers falla, el programa no se detiene, simplemente no se ejecuta el handler. Recover se encarga de capturar el panic
-// y el programa continua su ejecución normalmente.
 type Orchestrator struct {
 	handlers map[string]func()
 }
 
 func (o *Orchestrator) RunHandler(name string) {
 	// recover from panic
+	// - r contains the data about the generated panic
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("recovered from panic:", r)

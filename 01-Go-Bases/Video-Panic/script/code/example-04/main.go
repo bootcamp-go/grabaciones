@@ -6,11 +6,15 @@ import (
 	"os"
 )
 
-// Video-Speech: Aca tenemos un caso de un panic forzado donde el programa finaliza abruptamente
-// al no poder abrir el archivo, el programa genera un panic
-// si bien podemos usar el panic de esta forma, se puede aun aplicar el manejo de errores tradicional de Go
-// hay casos como cuando se utilizan conexiones a bases de datos donde el panic tambien podría aplicarse si toda la app depende de la conexión
-// pero en general, el manejo de errores es la forma correcta de hacerlo
+/*
+	Notas del Orador:
+	- Asi como go genera panic para ciertos casos en forma nativa, como por ejemplo cuando se intenta acceder a un indice de un slice que no existe,
+	nosotros tambien podemos definir reglas donde ciertos procesos o funciones de mayor nivel de nuestra applicación lo generen panic.
+	- Hay casos donde se utilizan conexiones a bases de datos donde el panic tambien podría aplicarse si toda la app depende de la conexión.
+	- Aclaración: si bien podemos usar el panic de esta forma, se puede y recomienda aun así aplicar el manejo de errores tradicional de Go.
+
+	- Entrando en detalle en el ejemplo, en este caso generaremos panic manualmente en caso de no poder abrir un archivo.
+*/
 func main() {
 	fileName := "test.txt"
 
@@ -37,21 +41,4 @@ func GetFileData(fileName string) string {
 	}
 
 	return string(data)
-}
-
-// refactoring
-func GetFileDataRefactored(fileName string) (data string, err error) {
-	f, err := os.Open(fileName)
-	if err != nil {
-		return
-	}
-	defer f.Close()
-
-	dataBytes, err := io.ReadAll(f)
-	if err != nil {
-		return
-	}
-
-	data = string(dataBytes)
-	return
 }
