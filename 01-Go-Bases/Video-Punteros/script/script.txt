@@ -1,0 +1,101 @@
+Video - Punteros (ppt link: https://docs.google.com/presentation/d/1LL6fzc5zXEZ6K0s6TVqSICTgrBoFtQIOfuFUjR3vyqc/edit?usp=sharing)
+
+_______________________________________________________________________________________________________________________
+#PPT 01 - ¿Que es un puntero?
+Parte 1°
+Un puntero es un tipo de dato cuyo valor es una dirección de memoria.
+
+A diferencia de otros tipos de datos, como las cadenas de texto, los enteros, los flotantes, en este caso su valor es una dirección de memoria, es decir el lugar en memoria donde se almacena otro valor.
+
+De esta forma a través de un puntero, podemos mantener una referencia a otro valor, y acceder ya sea para leer o escribir en ese valor.
+
+Parte 2° - Analogia
+A modo de ejemplo, imaginense por ejemplo una biblioteca donde los libros se guardan en secciones, estantes en columnas y filas.
+
+Podemos utilizar un sistema de codigos que represente el numero de seccion, estante, columna y fila, para poder identificar un libro en particular.
+
+Estos codigos serían como las direcciones de memoria, que nos permiten tener una referencia a un libro en particular.
+
+_______________________________________________________________________________________________________________________
+#PPT 02 - ¿Como creamos un puntero?
+Parte 1°
+Llevando a los lenguajes de programacion, hay algunos como python que no permiten el uso de punteros, pero otros como C++, Rust y Go si lo permiten.
+
+En Go, para poder crear un puntero, simplemente inicializamos una variables que en este caso se llama ptr (de pointer) y para indicarle a go que es un tipo de dato puntero,
+utilizamos el asterisco (*) antes del tipo de dato al cual hará referencia, en este caso int.
+
+Por ende esta variable va a ser de tipo pointer a int, es decir un puntero a int.
+
+Parte 2°
+Las direcciones en memoria tienen formato hexadecimal.
+- Si no tiene asignada una su valor por default es 0x0,
+- Si tiene una asignada, se vería por ejemplo se vería como 0x0008.
+
+En nuestro ejemplo, la variable ptr quedo inicializada con su valor por default.
+Para los punteros el valor por default es nil, en representacion de una direccion de memoria 0x0. Por ende, no tiene ninguna direccion en memoria asignada. A menos que nosotros le asigmenos una.
+
+_______________________________________________________________________________________________________________________
+#PPT 03 - ¿Como asignamos una direccion de memoria a un puntero?
+1° Parte
+Para poder asignar una direccion de memoria a un puntero, utilizamos el operador & (ampersand) antes de la variable a la cual queremos obtener su direccion de memoria.
+
+En nuestro codigo de ejemplo creamos una variable "number" de type int que almacena el valor 10.
+
+Luego creamos una variable "ptr" de type pointer a int, y le asignamos la direccion de memoria de la variable "number" utilizando el operador &.
+
+Al mostrar en pantalla la direccion de memoria de ptr, nos retorna un valor hexadecimal.
+
+2° Parte: ¿Para que sirve el puntero como tal?
+El puntero nos permite acceder al valor que se encuentra en la direccion de memoria que tiene asignada, ya sea para leer o escribir en ese valor.
+
+_______________________________________________________________________________________________________________________
+#PPT 04 - ¿Como accedemos al valor de un puntero?
+1° Parte
+Para poder acceder al valor de un puntero, utilizamos el operador * (asterisco) antes de la variable a la cual queremos acceder. Este operador se lo conoce como operador de dereferenciación.
+
+En nuestro ejemplo la idea es poder acceder al valor que almacena la variable "number" a través del puntero "ptr" y modificarlo por 20.
+Como tal el pointer es una direccion en memoria, una etiqueta y hasta ahi nomas. Por ende no podemos hacer mucho, a menos que dereferenciemos.
+De esta forma podemos acceder al valor que se encuentra en esa direccion y leer o modificarlo.
+
+Dereferenciamos el puntero "ptr" y le asignamos el valor 20.
+
+Luego mostramos en pantalla la direccion de memoria de ptr y por ultimo mostramos en pantalla el valor de number. Para poder mostrar en pantalla tambien deberemos dereferenciar el puntero "ptr".
+
+
+2° Parte:
+Aclaracion:
+- En algunos casos Go aplica una dereferenciación implicita, pero tambien lo podemos hacer explicitamente.
+- En este ejemplo, en terminos practicos podríamos utilizar directamente la variable number al estar en el mismo scope. Aunque van a encontrarse con otros casos,
+donde trabajemos con distintos scopes con fines de hacer el codigo mas desacoplado, mantenible y reutilizable, los cuales no podran acceder a otras variables directamente
+y los punteros nos son de gran utilidad si buscamos mantener una referencia de estas.
+
+_______________________________________________________________________________________________________________________
+#PPT 05 - Ejemplo
+
+A la hora de mostrar en pantalla, podemos ver que muestra la direccion de memoria que almacena el puntero "ptr"
+Abajo aparece el valor que cambio de 10 a 20.
+
+_______________________________________________________________________________________________________________________
+#PPT 06 - Diagrama
+
+Para tener otra perspectiva de como funcionan los punteros. Vamos a verlo en formato de tablitas.
+
+Tenemos 3 tablas:
+- La primera muestra el nombre de las variables junto con su tipo de dato y su direccion en memoria.
+    - La variable s de tipo string en la direccion de memoria 0x001
+    - La variable ptr de tipo pointer a string en la direccion de memoria 0x004.
+
+- La segunda tabla muestra el valor que almacena s en su respectiva direccion de memoria. En este caso el valor es "hello"
+
+- La tercera tabla muestra el valor que almacena ptr en su respectiva direccion de memoria. En este caso el valor es 0x001 que representa la direccion de memoria de s.
+
+_______________________________________________________________________________________________________________________
+#PPT 07 - Conclusion
+
+Como conclusion final de este video, pudimos aprender que son los punteros, es decir un tipo de dato cuyo valor es una direccion de memoria de otro valor.
+
+Tambien aprendimos su utilidad, que es poder mantener una referencia a otro valor, y acceder ya sea para leer o escribir en ese valor.
+
+Vimos como crear un puntero, como asignarle una direccion de memoria (usando el simbolo &) y como acceder al valor que almacena mediante dereferenciación (usando el simbolo *) ya sea para leer o escribir.
+
+Un saludo y hasta la proxima.
