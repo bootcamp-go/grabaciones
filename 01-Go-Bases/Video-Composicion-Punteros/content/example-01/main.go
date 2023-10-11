@@ -14,17 +14,20 @@ func (p Person) FullName() string {
 }
 
 // SetFirstName sets the first name of the person
-func (p Person) SetFirstName(name string) {
-	p.FirstName = name
+func (p *Person) SetFirstName(firstName string) {
+	(*p).FirstName = firstName
 }
 
 func main() {
+	// Create a new person
 	person := Person{
 		FirstName: "John",
 		LastName:  "Doe",
 	}
 
+	// update the first name
 	person.SetFirstName("Jane")
 
+	// print the full name
 	println(person.FullName())
 }
