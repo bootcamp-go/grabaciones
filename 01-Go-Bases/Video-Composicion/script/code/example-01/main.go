@@ -10,6 +10,7 @@ type Publisher struct {
 	Founders []string
 }
 
+// p es un 
 func (p Publisher) TotalFounders() int {
 	return len(p.Founders)
 }

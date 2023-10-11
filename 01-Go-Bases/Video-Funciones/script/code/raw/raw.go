@@ -5,7 +5,7 @@ import "fmt"
 func main() {
 	// number
 	n1 := 2
-
+	
 	// get the square of a number of n1
 	square := n1 * n1
 	fmt.Printf("The square of %d is %d\n", n1, square)
