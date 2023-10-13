@@ -1,0 +1,62 @@
+Video - Test Integracion (ppt link: ...)
+
+________________________________________________________________________________________________
+# PPT 01 - Intro
+Muy buenas a todos, espero que se encuentren muy bien.
+
+En este video veremos los siguientes temas:
+- Repaso de Tests Unitarios
+- ¿Qué es un Test de Integración?
+- Herramientas para llevar a cabo un Test de Integración
+- Implementacion en Go
+
+________________________________________________________________________________________________
+# PPT 02 - Repaso Test Unitario
+Antes de adentrarnos en las pruebas de integración, es crucial tener una comprensión sólida de las pruebas unitarias.
+
+Los tests unitarios son pruebas unitarias esenciales para verificar que una unidad de código dentro de nuestro programa funcione correctamente. 
+
+Su objetivo es confirmar que, ante diferentes entradas (inputs), el proceso produce el resultado esperado. 
+
+Estas pruebas pueden ser de dos tipos: de caja blanca (cuando conocemos el código de la unidad probada) o de caja negra (cuando no conocemos el código subyacente).
+
+
+________________________________________________________________________________________________
+# PPT 03 - Test Integracion
+¿Qué es un Test de Integración?
+Un test de integracion es una prueba enfocada en verificar la correcta interacción de nuestro sistema con componentes externos como bases de datos o servicios externos, que representan procesos ajenos a nuestra applicacion.
+El proceso aplicado por estos componentes esta abstraido, quedando fuera de nuestro control.
+
+Durante el test evaluaremos si ante cierto input, el output que nuestro sistema genere despues del proceso aplicado incluyendo la interacción con la data obtenida de estos componentes externos, es el esperado.
+
+Las pruebas de integración son cruciales para asegurar que nuestro sistema funcione sin problemas con procesos externos.
+
+________________________________________________________________________________________________
+# PPT 04 - Herramientas
+¿Qué herramientas podemos usar para realizar Test de Integración?
+Para realizar pruebas de integración efectivas, necesitamos utilizar las herramientas adecuadas. 
+
+Para simular el comportamiento aplicado por estos componentes externos, podemos hacer uso de Test Containers o Docker
+
+- Test Containers: estos contenedores de pruena nos permite levantar servicios como bases de datos, entre otros.
+- Docker: Es una herramienta versátil que facilita la creación, implementación y ejecución de contenedores de software.
+
+En nuestros proyectos emplearemos Test Containers para instanciar una base de datos MySQL y realizar un test de integracion.
+
+________________________________________________________________________________________________
+# PPT 05 - Implementacion
+./code/
+
+________________________________________________________________________________________________
+# PPT 06 - Conclusiones
+Finalmente, recapitulemos lo que hemos aprendido en este video.
+
+En este video, repasamos las pruebas unitarias y su importancia.
+
+Luego, exploramos a fondo las pruebas de integración, fundamentales para verificar la interacción de nuestro sistema con componentes externos.
+
+Analizamos las herramientas disponibles para llevar a cabo pruebas de integración, como Test Containers y Docker.
+
+Por último, exploramos la implementación de pruebas de integración en Go.
+
+Un saludo a todos y hasta la proxima.
