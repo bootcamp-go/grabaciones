@@ -2,11 +2,6 @@ package main
 
 import "fmt"
 
-/*
-	Notas del Orador:
-	- En este ejemplo veremos un panic nativo de Go
-	donde al intentar acceder a un indice de un slice que no existe, Go genera un panic.
-*/
 // main.go
 func main() {
 	// Create a new store
