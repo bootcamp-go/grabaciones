@@ -6,7 +6,12 @@ import (
 )
 
 func main() {
+	// Create a new Calculator.
+	c := &Calculator{}
 
+	// Add 2 and 3.
+	result := c.Add(2, 3)
+	println(result)
 }
 
 // calculator.go
