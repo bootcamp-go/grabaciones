@@ -226,6 +226,8 @@ En este video aprendimos:
 - Importancia del manejo de errores durante el desarrollo de software.
 
 - Cuanta más información tengamos sobre el problema que ha ocurrido, más rápido y sencillo será solucionarlo.
+    + Rápidos + Fácil
+    - Tiempo  - Recursos
 
 - Saber cómo gestionar situaciones de error agrega un valor significativo tanto al programador como al código que crea.
 ```
