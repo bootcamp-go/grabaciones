@@ -29,7 +29,7 @@ type error interface {
 
 ## Slide 04 - ¿Como creamos un error?
 
-Para crear un error en Go tenemos diversas formas. Primero debemos contar con algun type que implemente el método Error de la interface error.
+Para crear un error en Go tenemos diversas formas. Tomemos un approach mas manual. Primero debemos contar con algún type que implemente el método Error() string de la interface error
 
 En nuestro caso creamos un type CustomError struct que contiene un campo message de tipo string, y un método Error que devuelve el campo message.
 Finalmente creamos una variable de type interface error, donde instanciamos nuestro type CustomError.
@@ -87,7 +87,7 @@ func main() {
 
 Hasta ahora hemos aprendido cómo generar errores, pero también es importante saber cómo identificarlos.
 
-Una forma sencilla de hacerlo es mediante el operador ==, donde comparamos el error
+Una forma sencilla de hacerlo es mediante el operador ==, donde comparamos un error con otro.
 
 ```go
 var ErrNotFound = errors.New("Not found")
@@ -131,7 +131,6 @@ type CustomError struct {
     Message string
     Code    int
 }
-
 func (e *CustomError) Error() string {
     return e.Message
 }
@@ -154,7 +153,7 @@ func main() {
 
 Una gran particularidad de GO es que las funciones pueden ser de multi-retorno, es decir, una función puede devolver múltiples valores.
 
-Como buena práctica, aprovechamos esta característica de GO cuando necesitamos trabajar con una función con potencial de posible fallo, con el fin de que indique que puede que ocurra un error.
+Como buena práctica, aprovechamos esta característica de GO cuando necesitamos trabajar con una función con potencial de fallo, con el fin de que indique que puede que ocurra un error.
 
 Así, una función devolverá los tipos de datos necesarios y, además, un error. De esta manera, podemos indicar fácilmente si la función ha fallado o no y facilitar la deteción de errores.
 
@@ -164,7 +163,17 @@ func() (result interface{}, err error) {
 }
 ```
 
+---
+
+## Slide 09 - Manejo de errores - Ejemplo
+
 Veamos cómo declaramos una función, contemplando que algo puede salir mal
+
+```slide
+Generacion
+
+Consideramos casos posibles de fallo
+```
 
 ```go
 var ErrDivideByZero = errors.New("can not divide by zero")
@@ -185,6 +194,12 @@ Caso contrario, devolvera el resultado de la division y nil, indicando que no hu
 
 Importante: a la hora de utilizar esta función, debemos considerar que puede devolver un error, por lo que debemos contemplar esta posibilidad, por ende previo a continuar con el flujo de la función, debemos verificar si el error es nil o no.
 
+```slide
+Identificación
+
+A la hora de utilizar esta función, debemos considerar que puede devolver un error
+```
+
 ```go
 func main() {
     result, err := divide(10, 0)
@@ -204,10 +219,27 @@ No aplicamos a la inversa, es decir, no verificamos si el error es nil y continu
 
 ---
 
-## Slide 09 - Cierre
+## Slide 10 - Conclusiones
 
-Comprender cómo manejar errores es fundamental durante el desarrollo de software. Esto garantiza que nuestro programa funcione de acuerdo a nuestras expectativas, incluso cuando ocurre una falla.
+```slide
+En este video aprendimos:
+- Importancia del manejo de errores durante el desarrollo de software.
 
-Cuanta más información tengamos sobre el problema que ha ocurrido, más rápido y sencillo será solucionarlo. Por lo tanto, un manejo adecuado de errores nos ahorra tiempo y recursos.
+- Cuanta más información tengamos sobre el problema que ha ocurrido, más rápido y sencillo será solucionarlo.
 
-Saber cómo gestionar situaciones de error agrega un valor significativo tanto al programador como al código que crea. ¡Esperamos que puedan aplicar estos conocimientos en sus próximos proyectos!
+- Saber cómo gestionar situaciones de error agrega un valor significativo tanto al programador como al código que crea.
+```
+
+En este video aprendimos:
+- Comprender cómo manejar errores es fundamental durante el desarrollo de software. Esto garantiza que nuestro programa funcione de acuerdo a nuestras expectativas, incluso cuando ocurre una falla.
+
+- Cuanta más información tengamos sobre el problema que ha ocurrido, más rápido y sencillo será solucionarlo. Por lo tanto, un manejo adecuado de errores nos ahorra tiempo y recursos.
+
+- Saber cómo gestionar situaciones de error agrega un valor significativo tanto al programador como al código que crea. ¡Esperamos que puedan aplicar estos conocimientos en sus próximos proyectos!
+
+
+---
+
+## Slide 11 - Cierre
+
+Espero que el video les haya sido de utilidad. Un saludo y ¡hasta la próxima!
