@@ -72,6 +72,14 @@ Para inicializar un module en Go, hay que ejecutar el comando go mod init seguid
 go mod init application
 ```
 
+A un costado podemos ver el contenido del archivo generado go.mod, que contiene el nombre del módulo y la versión de Go utilizada.
+
+```go.mod
+module application
+
+go 1.21
+```
+
 ---
 
 ## Slide 05 - Diagrama
