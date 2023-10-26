@@ -29,18 +29,12 @@ func init() {
 	txdb.Register("txdb", "mysql", cfg.FormatDSN())
 }
 
-func dbInstance(identifier string) (db *sql.DB, err error) {
-	// open connection
-	db, err = sql.Open("txdb", identifier)
-	return
-}
-
-// TestHandlerMovie_SaveMovie tests the SaveMovie method.
-func TestHandlerMovie_SaveMovie(t *testing.T) {
+// Tests for HandlerMovie.Save
+func TestHandlerMovieSave(t *testing.T) {
 	t.Run("Success - movie saved", func(t *testing.T) {
 		// arrange
 		// - db: init
-		db, err := dbInstance("TestHandlerMovie_SaveMovie_Success")
+		db, err := sql.Open("txdb", "TestHandlerMovieSave_Success")
 		if err != nil {
 			require.NoError(t, err)
 		}
@@ -79,7 +73,7 @@ func TestHandlerMovie_SaveMovie(t *testing.T) {
 	t.Run("Failure - movie duplicated", func(t *testing.T) {
 		// arrange
 		// - db: init
-		db, err := dbInstance("TestHandlerMovie_SaveMovie_Failure_Duplicated")
+		db, err := sql.Open("txdb", "TestHandlerMovieSave_Failure")
 		if err != nil {
 			require.NoError(t, err)
 		}

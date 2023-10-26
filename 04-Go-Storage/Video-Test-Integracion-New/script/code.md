@@ -1,8 +1,8 @@
 ________________________________________________________________
 ## Introducción Proyecto
-- Mostrar el schema Movie
-- Mostrar capa storage: esta se encarga de interactuar con la base de datos
-- Mostrar capa handlers: esta se encarga de manejar las peticiones del usuario e interactuar con la capa storage
+- Mostrar el schema Movie del archivo `./docs/db/movies_db.sql`
+- Mostrar capa repository: esta se encarga de interactuar con la base de datos
+- Mostrar capa handler: esta se encarga de manejar las peticiones del usuario e interactuar con la capa storage
 - Mostrar capa application: esta se encarga de manejar la app con su configuración enfocada en los requisitos finales.
 - Mostrar capa main: esta se encarga de ejecutar la aplicación.
 
@@ -21,141 +21,145 @@ Speech: al revisar que necesitaremos para realizar nuestro test de integración,
 cual tiene una dependencia que es StorageMovie, por lo que necesitamos una instancia de StorageMovie. Esta ultima tiene otra dependencia, la propia
 base de datos, por lo que necesitamos una instancia de la base de datos.
 
-Recordando los tests, estos deben realizarse de forma aislada, pues cada test
-que ejecutemos debería interactuar con una propia instancia de la base de datos, por lo que necesitamos una base de datos por test.
+Recordando los tests, estos deben realizarse en base a los principios FIRST, donde nos enfocaremos en su aislamiento y repitibilidad
 
-Previamente vimos herramientas como Test Containers en los que podemos levantar un servicio como una base de datos. Podríamos usar esta herramienta
-para simular su comportamiento, pero en este caso y con fines prácticos, usaremos una base de datos local, junto a un package que nos permitirá
-crear schemas de la db por test.
+Previamente mencionamos que utilizaremos una base de datos compartidas junto con el package go-txdb, donde se aplica rollbacks y aislamiento.
 
-Este package creara un schema de db con el nombre que le indiquemos, luego prepararemos la misma con queries y al final del test, la eliminaremos.
+Comenzemos creando el test de HandlerMovie para el metodo Save, un caso de success, donde se guardara una pelicula en la base de datos, y un caso
+failure donde la pelicula se encuentra duplicada.
 ```
 
-________________________________________________________________
-## Package Tester
-- Mostrar package "app/platform/database/tester", el archivo "mysql.go"
-
-________________________________________________________________
-## Test HandlerMovie
-**Test HandlerMovie.GetMovies**
-- Crear la funcion DbInstance()
+### Test HandlerMovie
+**Test HandlerMovie.Save**
+> crear archivo `./handler/movie_test.go`
+> 
 ```go
-// DbInstance returns a new instance of sql.DB.
-func DbInstance() (db *sql.DB, err error) {
-	// database configuration
-	cfg := mysql.Config{
-		User:   "root",
-		Passwd: "",
-		Net:    "tcp",
-		Addr:   "localhost:3306",
-	}
+package handler_test
 
-	// connect to database
-	db, err = sql.Open("mysql", cfg.FormatDSN())
-	return
-}
-```
-
-- Crear la funcion TestHandlerMovie_GetMovies() y agregar test cases
-```go
-// TestHandlerMovie_GetMovies tests the GetMovies method.
-func TestHandlerMovie_GetMovies(t *testing.T) {
-    t.Run("succeed to get an empty list of movies", func(t *testing.T) {
-        // arrange
-
-        // act
-
-        // assert
-    })
-
-    t.Run("succeed to get a list of movies", func(t *testing.T) {
-        // arrange
-
-        // act
-
-        // assert
-    })
-}
-```
-
-- Comenzar con `arrange` en el caso "succeed to get an empty list of movies"
-```go
-	t.Run("succeed to get an empty list of movies", func(t *testing.T) {
+// Tests for HandlerMovie.Save
+func TestHandlerMovieSave(t *testing.T) {
+	t.Run("Success - movie saved", func(t *testing.T) {
 		// arrange
-		// - database connection
-		db, err := DbInstance()
-		require.NoError(t, err)
-		defer db.Close()
 
-		// - database tester: setup
-		dbTester := tester.NewMySQLTester(db, "db_test_handler_movie_get_movies_empty")
-		defer dbTester.TearDown()
-
-		err = dbTester.SetUp(
-			`CREATE TABLE movies (
-				id INT NOT NULL AUTO_INCREMENT,
-				title VARCHAR(255) NOT NULL,
-				year INT NOT NULL,
-				director VARCHAR(255) NOT NULL,
-				PRIMARY KEY (id)
-			)`,
-		)
-		require.NoError(t, err)
-
-        // ...
-    })
-```
-
-- Continuar con storage y handler
-```go
-	t.Run("succeed to get an empty list of movies", func(t *testing.T) {
-		// arrange
-        // - storage
-		st := storage.NewStorageMovieMySQL(db)
-		
-		// - handler
-		hd := handler.NewHandlerMovie(st)
-		hdFunc := hd.GetMovies()
-    })
-```
-
-- Continuar con `act` explicando que el handler recibe como parametros un request y un response, por lo que tendremos que crear un request utilizando el package http.Request y un response. El response es una interface http.ResponseWriter. Junto al package httptest podremos crear una instancia de un type que lo implementa, con httptest.NewRecorder() que retorna httptest.ResponseRecorder{}
-```go
-func TestHandlerMovie_GetMovies(t *testing.T) {
-	t.Run("succeed to get an empty list of movies", func(t *testing.T) {
 		// act
-		req := http.Request{}
-		res := httptest.NewRecorder()
-		hdFunc(res, &req)
-    })
-```
 
-- Finalmente, `assert` verificando que el status code, el body, y los headers
-```go
-	t.Run("succeed to get an empty list of movies", func(t *testing.T) {
 		// assert
-		require.Equal(t, http.StatusOK, res.Code)
-		require.JSONEq(t, `{"data":[]}`, res.Body.String())
-		require.Equal(t, http.Header{
-			"Content-Type": []string{"application/json; charset=utf-8"},
-		}, res.Header())
 	})
+
+	t.Run("Failure - movie duplicated", func(t *testing.T) {
+		// arrange
+
+		// act
+
+		// assert
+	})
+}
 ```
 
-- Continuar sin problema con "succeed to get a list of movies"
+Ahora instalaremos el package go-txdb
+```bash
+go get github.com/DATA-DOG/go-txdb
+```
 
-________________________________________________________________
-## Test HandlerMovie.SaveMovie
-Lo mismo. Cuando se llegue a la parte del request, explicar como armar el body. http.Request pide para el body un io.ReadCloser, otra interfaz. Para ello podremos usar io.NopCloser, el cual pide tambien un io.Reader, otra interfaz. Para ello podremos usar strings.NewReader, el cual pide un string
-transformando la cadena de texto en un reader, del cual podremos leer como un stream de datos en bytes.
+Pasamos a registrar el driver de txdb, sobre el de mysql. Para ello necesitaremos pasar el nombre del driver txdb, luego menciona el driver el cual abtraera, mysql y finalmente la conexion a la db.
+En go la funcion `init` es una función especial que se utiliza para inicializar paquetes dentro de un programa. La función init se ejecuta automáticamente antes de que se inicie la función main en un programa Go. Cada paquete en Go puede tener una o varias funciones init, y todas se ejecutarán en el orden en que se importan los paquetes.
+En nuestro caso se ejecutara previo a los tests para registrar el driver de txdb sobre el de mysql. Una vez hecho esto, las conexiones que abramos con sql.Open() inician una transaccion aislada y con rollback, por lo que no se guardaran los cambios en la base de datos.
 ```go
-    // act
-    req := http.Request{
-        Header: http.Header{
-            "Content-Type": []string{"application/json"},
-        },
-        Body: io.NopCloser(strings.NewReader(
-            `{"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"}`,
-        )),
-    }
+func init() {
+	// cfg
+	cfg := mysql.Config{
+		User:                 "root",
+		Passwd:               "",
+		Net:                  "tcp",
+		Addr:                 "localhost:3306",
+		DBName:               "movies_test_db",
+	}
+	// register txdb driver
+	txdb.Register("txdb", "mysql", cfg.FormatDSN())
+}
+```
+
+Pasamos con el arrange, donde primero inicializaremos la db, luego podremos aplicar una serie de set-ups en caso de ser necesario. Para este test con la db vacia es suficiente. Luego creamos el repository y finalmente el handler del cual obtendremos el handler Save.
+```go
+unc TestHandlerMovieSave(t *testing.T) {
+	t.Run("Success - movie saved", func(t *testing.T) {
+		// arrange
+		// - db: init
+		db, err := sql.Open("txdb", "TestHandlerMovieSave_Success")
+		if err != nil {
+			require.NoError(t, err)
+		}
+		defer db.Close()
+		// - db: setup
+		// ...
+		// - repository
+		rp := repository.NewRepositoryMovieMySQL(db)
+		// - handler
+		hd := handler.NewHandlerMovie(rp)
+		hdFunc := hd.Save()
+	})
+}
+```
+
+Pasamos con el act, donde llamaremos al handler el cual necesita un *http.Request y un http.ResponseWriter
+http.Request pide para el body un io.ReadCloser, otra interfaz. Para ello podremos usar io.NopCloser, el cual pide tambien un io.Reader, otra interfaz. Para ello podremos usar strings.NewReader, el cual pide un string
+transformando la cadena de texto en un reader, del cual podremos leer como un stream de datos en bytes.
+Agregamos los headers indicando que el contenido es en formato json
+Luego creamos el response con httptest.NewRecorder() el cual devuelve un struct httptest.ResponseRecorder que implementa la interfaz http.ResponseWriter
+finalmente ejecutamos el handler
+```go
+func TestHandlerMovieSave(t *testing.T) {
+	t.Run("Success - movie saved", func(t *testing.T) {
+		// act
+		request := &http.Request{
+			Body: io.NopCloser(strings.NewReader(
+				`{"id": 1, "title": "The Godfather", "year": 1972, "director": "Francis Ford Coppola"}`,
+			)),
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+		}
+		response:= httptest.NewRecorder()
+		hdFunc(response, request)
+	})
+}
+```
+
+Finalmente armamos el assert. Recuerde require.JSONEq nos permite comparar json sin importar el orden de las claves.
+```go
+func TestHandlerMovieSave(t *testing.T) {
+	t.Run("Success - movie saved", func(t *testing.T) {
+		// assert
+		expectedCode := http.StatusCreated
+		expectedBody := `{"message":"movie created","data":{"id":1,"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"}}`
+		expectedHeader := http.Header{
+			"Content-Type": []string{"application/json"},
+		}
+		require.Equal(t, expectedCode, response.Code)
+		require.JSONEq(t, expectedBody, response.Body.String())
+		require.Equal(t, expectedHeader, response.Header())
+	})
+}
+```
+
+---
+
+**Test HandlerMovie.Save**
+> mostrar el test completo e indicar las diferencias
+El otro caso de test es muy similar, con unas diferencias
+
+En el setup, insertamos en al db una pelicula con una funcion. En caso de fallar el test no podra continuar, por eso verificamos con require.NoError()
+
+Luego instanciamos lo necesario hasta obtener el handler Save.
+
+Enviamos el mismo request, pero como la pelicula ya existe, ahora esperamos que haya un error 409, ya que la db fallaría indicando el codigo 1062 de Duplicate entry.
+
+Para el expectedBody como utilizamos la funcion response.Error(), la estructura del mensaje es ...
+> mostrar errorResponse
+por ende el expectedBody quedaría como ...
+```go
+	expectedBody := fmt.Sprintf(
+		`{"status":"%s","message":"movie already exists"}`,
+		http.StatusText(expectedCode),
+	)
 ```
