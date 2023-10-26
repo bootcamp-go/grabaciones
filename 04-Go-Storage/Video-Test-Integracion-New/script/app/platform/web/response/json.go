@@ -22,7 +22,7 @@ func JSON(w http.ResponseWriter, code int, body any) {
 	}
 
 	// set header
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 
 	// set status code
 	w.WriteHeader(code)

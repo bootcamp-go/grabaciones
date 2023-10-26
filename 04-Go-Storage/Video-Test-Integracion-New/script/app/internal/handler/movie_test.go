@@ -2,171 +2,123 @@ package handler_test
 
 import (
 	"app/internal/handler"
-	"app/internal/storage"
-	"app/platform/database/tester"
+	"app/internal/repository"
 	"database/sql"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/DATA-DOG/go-txdb"
 	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/require"
 )
 
-// DbInstance returns a new instance of sql.DB.
-func DbInstance() (db *sql.DB, err error) {
-	// database configuration
+func init() {
+	// cfg
 	cfg := mysql.Config{
-		User:   "root",
-		Passwd: "",
-		Net:    "tcp",
-		Addr:   "localhost:3306",
+		User:                 "root",
+		Passwd:               "",
+		Net:                  "tcp",
+		Addr:                 "localhost:3306",
+		DBName:               "movies_test_db",
 	}
-
-	// connect to database
-	db, err = sql.Open("mysql", cfg.FormatDSN())
-	return
+	// register txdb driver
+	txdb.Register("txdb", "mysql", cfg.FormatDSN())
 }
 
-// TestHandlerMovie_GetMovies tests the GetMovies method.
-func TestHandlerMovie_GetMovies(t *testing.T) {
-	t.Run("succeed to get an empty list of movies", func(t *testing.T) {
-		// arrange
-		// - database connection
-		db, err := DbInstance()
-		require.NoError(t, err)
-		defer db.Close()
-
-		// - database tester: setup
-		dbTester := tester.NewMySQLTester(db, "db_test_handler_movie_get_movies_empty")
-		defer dbTester.TearDown()
-
-		err = dbTester.SetUp(
-			`CREATE TABLE movies (
-				id INT NOT NULL AUTO_INCREMENT,
-				title VARCHAR(255) NOT NULL,
-				year INT NOT NULL,
-				director VARCHAR(255) NOT NULL,
-				PRIMARY KEY (id)
-			)`,
-		)
-		require.NoError(t, err)
-
-		// - storage
-		st := storage.NewStorageMovieMySQL(db)
-		
-		// - handler
-		hd := handler.NewHandlerMovie(st)
-		hdFunc := hd.GetMovies()
-
-		// act
-		req := http.Request{}
-		res := httptest.NewRecorder()
-		hdFunc(res, &req)
-
-		// assert
-		require.Equal(t, http.StatusOK, res.Code)
-		require.JSONEq(t, `{"data":[]}`, res.Body.String())
-		require.Equal(t, http.Header{
-			"Content-Type": []string{"application/json; charset=utf-8"},
-		}, res.Header())
-	})
-
-	t.Run("succeed to get a list of movies", func(t *testing.T) {
-		// arrange
-		// - database connection
-		db, err := DbInstance()
-		require.NoError(t, err)
-		defer db.Close()
-
-		// - database tester: setup
-		dbTester := tester.NewMySQLTester(db, "db_test_handler_movie_get_movies")
-		defer dbTester.TearDown()
-
-		err = dbTester.SetUp(
-			`CREATE TABLE movies (
-				id INT NOT NULL AUTO_INCREMENT,
-				title VARCHAR(255) NOT NULL,
-				year INT NOT NULL,
-				director VARCHAR(255) NOT NULL,
-				PRIMARY KEY (id)
-			)`,
-			`INSERT INTO movies (title, year, director) VALUES ('The Godfather', 1972, 'Francis Ford Coppola')`,
-			`INSERT INTO movies (title, year, director) VALUES ('The Godfather: Part II', 1974, 'Francis Ford Coppola')`,
-		)
-		require.NoError(t, err)
-		
-		// - storage
-		st := storage.NewStorageMovieMySQL(db)
-
-		// - handler
-		hd := handler.NewHandlerMovie(st)
-		hdFunc := hd.GetMovies()
-
-		// act
-		req := http.Request{}
-		res := httptest.NewRecorder()
-		hdFunc(res, &req)
-
-		// assert
-		require.Equal(t, http.StatusOK, res.Code)
-		require.JSONEq(t, `{"data":[{"id":1,"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"},{"id":2,"title":"The Godfather: Part II","year":1974,"director":"Francis Ford Coppola"}]}`, res.Body.String())
-		require.Equal(t, http.Header{
-			"Content-Type": []string{"application/json; charset=utf-8"},
-		}, res.Header())
-	})
+func dbInstance(identifier string) (db *sql.DB, err error) {
+	// open connection
+	db, err = sql.Open("txdb", identifier)
+	return
 }
 
 // TestHandlerMovie_SaveMovie tests the SaveMovie method.
 func TestHandlerMovie_SaveMovie(t *testing.T) {
-	t.Run("succeed to save a movie", func(t *testing.T) {
+	t.Run("Success - movie saved", func(t *testing.T) {
 		// arrange
-		// - database connection
-		db, err := DbInstance()
-		require.NoError(t, err)
+		// - db: init
+		db, err := dbInstance("TestHandlerMovie_SaveMovie_Success")
+		if err != nil {
+			require.NoError(t, err)
+		}
 		defer db.Close()
-
-		// - database tester: setup
-		dbTester := tester.NewMySQLTester(db, "db_test_handler_movie_save_movie")
-		defer dbTester.TearDown()
-
-		err = dbTester.SetUp(
-			`CREATE TABLE movies (
-				id INT NOT NULL AUTO_INCREMENT,
-				title VARCHAR(255) NOT NULL,
-				year INT NOT NULL,
-				director VARCHAR(255) NOT NULL,
-				PRIMARY KEY (id)
-			)`,
-		)
-		require.NoError(t, err)
-
-		// - storage
-		st := storage.NewStorageMovieMySQL(db)
-
+		// - db: setup
+		// ...
+		// - repository
+		rp := repository.NewRepositoryMovieMySQL(db)
 		// - handler
-		hd := handler.NewHandlerMovie(st)
-		hdFunc := hd.SaveMovie()
+		hd := handler.NewHandlerMovie(rp)
+		hdFunc := hd.Save()
 
 		// act
-		req := http.Request{
+		request := &http.Request{
+			Body: io.NopCloser(strings.NewReader(
+				`{"id": 1, "title": "The Godfather", "year": 1972, "director": "Francis Ford Coppola"}`,
+			)),
 			Header: http.Header{
 				"Content-Type": []string{"application/json"},
 			},
-			Body: io.NopCloser(strings.NewReader(
-				`{"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"}`,
-			)),
 		}
-		res := httptest.NewRecorder()
-		hdFunc(res, &req)
+		response:= httptest.NewRecorder()
+		hdFunc(response, request)
 
 		// assert
-		require.Equal(t, http.StatusCreated, res.Code)
-		require.JSONEq(t, `{"data":{"id":1,"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"}}`, res.Body.String())
-		require.Equal(t, http.Header{
-			"Content-Type": []string{"application/json; charset=utf-8"},
-		}, res.Header())
+		expectedCode := http.StatusCreated
+		expectedBody := `{"message":"movie created","data":{"id":1,"title":"The Godfather","year":1972,"director":"Francis Ford Coppola"}}`
+		expectedHeader := http.Header{
+			"Content-Type": []string{"application/json"},
+		}
+		require.Equal(t, expectedCode, response.Code)
+		require.JSONEq(t, expectedBody, response.Body.String())
+		require.Equal(t, expectedHeader, response.Header())
+	})
+
+	t.Run("Failure - movie duplicated", func(t *testing.T) {
+		// arrange
+		// - db: init
+		db, err := dbInstance("TestHandlerMovie_SaveMovie_Failure_Duplicated")
+		if err != nil {
+			require.NoError(t, err)
+		}
+		defer db.Close()
+		// - db: setup
+		err = func() error {
+			_, err := db.Exec(`INSERT INTO movies (id, title, year, director) VALUES (1, "The Godfather", 1972, "Francis Ford Coppola")`)
+			return err
+		}()
+		require.NoError(t, err)
+		// - repository
+		rp := repository.NewRepositoryMovieMySQL(db)
+		// - handler
+		hd := handler.NewHandlerMovie(rp)
+		hdFunc := hd.Save()
+
+		// act
+		request := &http.Request{
+			Body: io.NopCloser(strings.NewReader(
+				`{"id": 1, "title": "The Godfather", "year": 1972, "director": "Francis Ford Coppola"}`,
+			)),
+			Header: http.Header{
+				"Content-Type": []string{"application/json"},
+			},
+		}
+		response:= httptest.NewRecorder()
+		hdFunc(response, request)
+
+		// assert
+		expectedCode := http.StatusConflict
+		expectedBody := fmt.Sprintf(
+			`{"status":"%s","message":"movie already exists"}`,
+			http.StatusText(expectedCode),
+		)
+		expectedHeader := http.Header{
+			"Content-Type": []string{"application/json"},
+		}
+		require.Equal(t, expectedCode, response.Code)
+		require.JSONEq(t, expectedBody, response.Body.String())
+		require.Equal(t, expectedHeader, response.Header())
 	})
 }

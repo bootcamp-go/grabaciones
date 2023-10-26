@@ -14,6 +14,6 @@ type MovieAttributes struct {
 type Movie struct {
 	// Id is the unique identifier of the movie
 	Id int
-	// Attributes is the attributes of the movie
-	Attributes MovieAttributes
+	// MovieAttributes is the attributes of the movie
+	MovieAttributes
 }

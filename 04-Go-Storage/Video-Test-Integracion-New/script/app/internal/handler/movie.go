@@ -2,21 +2,21 @@ package handler
 
 import (
 	"app/internal"
-	"app/internal/storage"
 	"app/platform/web/request"
 	"app/platform/web/response"
+	"errors"
 	"net/http"
 )
 
 // NewHandlerMovie returns a new instance of HandlerMovie.
-func NewHandlerMovie(st storage.StorageMovie) *HandlerMovie {
-	return &HandlerMovie{st: st}
+func NewHandlerMovie(rp internal.RepositoryMovie) *HandlerMovie {
+	return &HandlerMovie{rp: rp}
 }
 
 // HandlerMovie is an struct with handler methods for the movie resource.
 type HandlerMovie struct {
-	// st is the storage implementation.
-	st storage.StorageMovie
+	// rp is the repository implementation.
+	rp internal.RepositoryMovie
 }
 
 type MovieJSON struct {
@@ -26,51 +26,20 @@ type MovieJSON struct {
 	Director string `json:"director"`
 }
 
-// GetMovies returns a list of movies.
-// - 200: returns a list of movies.
-// - 500: internal server error.
-func (h *HandlerMovie) GetMovies() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// request
-		// ...
-
-		// process
-		m, err := h.st.GetMovies()
-		if err != nil {
-			response.Error(w, http.StatusInternalServerError, "cannot get movies")
-			return
-		}
-
-		// response
-		// - serialize
-		movies := make([]MovieJSON, 0)
-		for _, v := range m {
-			movies = append(movies, MovieJSON{
-				Id:       v.Id,
-				Title:    v.Attributes.Title,
-				Year:     v.Attributes.Year,
-				Director: v.Attributes.Director,
-			})
-		}
-		response.JSON(w, http.StatusOK, map[string]any{
-			"data": movies,
-		})
-	}
-}
-
-// SaveMovie saves a movie
+// Save saves a movie
 // - 201: movie created.
 // - 400: bad request.
 // - 500: internal server error.
-type SaveMovieRequest struct {
+type SaveRequest struct {
+	Id       int    `json:"id"`
 	Title    string `json:"title"`
 	Year     int    `json:"year"`
 	Director string `json:"director"`
 }
-func (h *HandlerMovie) SaveMovie() http.HandlerFunc {
+func (h *HandlerMovie) Save() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// request
-		var req SaveMovieRequest
+		var req SaveRequest
 		err := request.JSON(r, &req)
 		if err != nil {
 			response.Error(w, http.StatusBadRequest, "invalid request")
@@ -80,26 +49,33 @@ func (h *HandlerMovie) SaveMovie() http.HandlerFunc {
 		// process
 		// - deserialize
 		mv := internal.Movie{
-			Attributes: internal.MovieAttributes{
+			Id: req.Id,
+			MovieAttributes: internal.MovieAttributes{
 				Title:    req.Title,
 				Year:     req.Year,
 				Director: req.Director,
 			},
 		}
 		// - save
-		err = h.st.SaveMovie(&mv)
+		err = h.rp.Save(&mv)
 		if err != nil {
-			response.Error(w, http.StatusInternalServerError, "cannot save movie")
+			switch {
+			case errors.Is(err, internal.ErrRepositoryDuplicateMovie):
+				response.Error(w, http.StatusConflict, "movie already exists")
+			default:
+				response.Error(w, http.StatusInternalServerError, "internal server error")
+			}
 			return
 		}
 
 		// response
 		response.JSON(w, http.StatusCreated, map[string]any{
+			"message": "movie created",
 			"data": MovieJSON{
 				Id:       mv.Id,
-				Title:    mv.Attributes.Title,
-				Year:     mv.Attributes.Year,
-				Director: mv.Attributes.Director,
+				Title:    mv.Title,
+				Year:     mv.Year,
+				Director: mv.Director,
 			},
 		})
 	}

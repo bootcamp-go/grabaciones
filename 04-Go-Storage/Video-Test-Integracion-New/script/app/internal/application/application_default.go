@@ -2,7 +2,7 @@ package application
 
 import (
 	"app/internal/handler"
-	"app/internal/storage"
+	"app/internal/repository"
 	"database/sql"
 	"net/http"
 
@@ -11,17 +11,28 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+// ConfigAppDefault is the application configuration.
+type ConfigAppDefault struct {
+	// Router is the router implementation.
+	Router *chi.Mux
+	// ServerAddress is the server address.
+	ServerAddress string
+	// ConfigMySQL is the MySQL configuration.
+	ConfigMySQL *mysql.Config
+}
+
 // NewApplicationDefault returns a new instance of ApplicationDefault.
 func NewApplicationDefault(config *ConfigAppDefault) *ApplicationDefault {
 	// default config
-	defaultRouter := chi.NewRouter()
-	defaultRouter.Use(middleware.Logger)
-	defaultRouter.Use(middleware.Recoverer)
 	defaultConfig := &ConfigAppDefault{
+		Router:        chi.NewRouter(),
 		ServerAddress: ":8080",
 		ConfigMySQL: &mysql.Config{},
 	}
 	if config != nil {
+		if config.Router != nil {
+			defaultConfig.Router = config.Router
+		}
 		if config.ServerAddress != "" {
 			defaultConfig.ServerAddress = config.ServerAddress
 		}
@@ -31,18 +42,10 @@ func NewApplicationDefault(config *ConfigAppDefault) *ApplicationDefault {
 	}
 
 	return &ApplicationDefault{
-		router:        defaultRouter,
+		router:        defaultConfig.Router,
 		serverAddress: defaultConfig.ServerAddress,
 		configMySQL:   defaultConfig.ConfigMySQL,
 	}
-}
-
-// ConfigAppDefault is the application configuration.
-type ConfigAppDefault struct {
-	// ServerAddress is the server address.
-	ServerAddress string
-	// ConfigMySQL is the MySQL configuration.
-	ConfigMySQL *mysql.Config
 }
 
 // New returns a new instance of Application.
@@ -55,6 +58,7 @@ type ApplicationDefault struct {
 	configMySQL *mysql.Config
 }
 
+// SetUp sets up the application.
 func (a *ApplicationDefault) SetUp() (err error) {
 	// dependencies
 	// - database: open connection
@@ -68,25 +72,25 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	if err != nil {
 		return
 	}
-
 	// - storage
-	stMovie := storage.NewStorageMovieMySQL(db)
-
+	rp := repository.NewRepositoryMovieMySQL(db)
 	// - handler
-	hdMovie := handler.NewHandlerMovie(stMovie)
+	hd := handler.NewHandlerMovie(rp)
 
 	// routes
+	// - middlewares
+	a.router.Use(middleware.Logger)
+	a.router.Use(middleware.Recoverer)
 	// - handler
 	a.router.Route("/movies", func(r chi.Router) {
-		// GET /movies
-		r.Get("/", hdMovie.GetMovies())
 		// POST /movies
-		r.Post("/", hdMovie.SaveMovie())
+		r.Post("/", hd.Save())
 	})
 
 	return
 }
 
+// Run runs the application.
 func (a *ApplicationDefault) Run() (err error) {
 	err = http.ListenAndServe(a.serverAddress, a.router)
 	return
